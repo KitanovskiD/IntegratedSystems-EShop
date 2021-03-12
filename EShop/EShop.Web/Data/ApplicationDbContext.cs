@@ -18,6 +18,8 @@ namespace EShop.Web.Data
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public virtual DbSet<ProductInShoppingCart> ProductInShoppingCarts { get; set; }
+        public virtual DbSet<ProductInOrder> ProductInOrders { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -49,6 +51,20 @@ namespace EShop.Web.Data
                 .HasOne<EShopApplicationUser>(z => z.Owner)
                 .WithOne(z => z.UserCart)
                 .HasForeignKey<ShoppingCart>(z => z.OwnerId);
+
+
+            builder.Entity<ProductInOrder>()
+               .HasKey(z => new { z.ProductId, z.OrderId });
+
+            builder.Entity<ProductInOrder>()
+                .HasOne(z => z.OrderedProduct)
+                .WithMany(z => z.ProductInOrders)
+                .HasForeignKey(z => z.OrderId);
+
+            builder.Entity<ProductInOrder>()
+                .HasOne(z => z.UserOrder)
+                .WithMany(z => z.ProductInOrders)
+                .HasForeignKey(z => z.ProductId);
         }
     }
 }

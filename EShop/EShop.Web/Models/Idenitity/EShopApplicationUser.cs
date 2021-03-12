@@ -14,6 +14,7 @@ namespace EShop.Web.Models.Idenitity
         public string Address { get; set; }
 
         public virtual ShoppingCart UserCart { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
 
     }
 }
