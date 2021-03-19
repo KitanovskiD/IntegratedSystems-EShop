@@ -1,6 +1,6 @@
 ﻿
-using EShop.Domain.DomainModels;
-using EShop.Domain.Idenitity;
+using EShop.Web.Models.Idenitity;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +45,7 @@ namespace EShop.Web.Controllers
                         Email = request.Email,
                         EmailConfirmed = true,
                         PhoneNumberConfirmed = true,
-                        UserCart = new ShoppingCart()
+                        UserCart = new Models.Domain.ShoppingCart()
                     };
                     var result = await userManager.CreateAsync(user, request.Password);
                     if (result.Succeeded)

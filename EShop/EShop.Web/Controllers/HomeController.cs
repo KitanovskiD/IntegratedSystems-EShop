@@ -1,5 +1,4 @@
-﻿
-using EShop.Domain;
+﻿using EShop.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
