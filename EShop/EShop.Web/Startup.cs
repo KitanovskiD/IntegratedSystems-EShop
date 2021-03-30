@@ -45,6 +45,7 @@ namespace EShop.Web
 
 
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IShoppingCartService, ShoppingCartService>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

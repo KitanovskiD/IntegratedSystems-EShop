@@ -31,8 +31,8 @@ namespace EShop.Repository
                 .Property(z => z.Id)
                 .ValueGeneratedOnAdd();
 
-            builder.Entity<ProductInShoppingCart>()
-                .HasKey(z => new { z.ProductId, z.ShoppingCartId });
+            //builder.Entity<ProductInShoppingCart>()
+            //    .HasKey(z => new { z.ProductId, z.ShoppingCartId });
 
             builder.Entity<ProductInShoppingCart>()
                 .HasOne(z => z.Product)
@@ -51,8 +51,8 @@ namespace EShop.Repository
                 .HasForeignKey<ShoppingCart>(z => z.OwnerId);
 
 
-            builder.Entity<ProductInOrder>()
-               .HasKey(z => new { z.ProductId, z.OrderId });
+            //builder.Entity<ProductInOrder>()
+            //   .HasKey(z => new { z.ProductId, z.OrderId });
 
             builder.Entity<ProductInOrder>()
                 .HasOne(z => z.OrderedProduct)

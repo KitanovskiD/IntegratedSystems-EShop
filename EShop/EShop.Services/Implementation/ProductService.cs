@@ -2,6 +2,7 @@
 using EShop.Domain.DTO;
 using EShop.Repository.Interface;
 using EShop.Services.Interface;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace EShop.Services.Implementation
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductInShoppingCart> _productInShoppingCartRepository;
         private readonly IUserRepository _userRepository;
-        public ProductService(IRepository<Product> productRepository, IRepository<ProductInShoppingCart> productInShoppingCartRepository, IUserRepository userRepository)
+        private readonly ILogger<ProductService> _logger;
+        public ProductService(IRepository<Product> productRepository, ILogger<ProductService> logger, IRepository<ProductInShoppingCart> productInShoppingCartRepository, IUserRepository userRepository)
         {
             _productRepository = productRepository;
             _userRepository = userRepository;
             _productInShoppingCartRepository = productInShoppingCartRepository;
+            _logger = logger;
         }
 
         public bool AddToShoppingCart(AddToShoppingCardDto item, string userID)
@@ -36,6 +39,7 @@ namespace EShop.Services.Implementation
                 {
                     ProductInShoppingCart itemToAdd = new ProductInShoppingCart
                     {
+                        Id = Guid.NewGuid(),
                         Product = product,
                         ProductId = product.Id,
                         ShoppingCart = userShoppingCard,
@@ -44,10 +48,12 @@ namespace EShop.Services.Implementation
                     };
 
                     this._productInShoppingCartRepository.Insert(itemToAdd);
+                    _logger.LogInformation("Product was successfully added into ShoppingCart");
                     return true;
                 }
                 return false;
             }
+            _logger.LogInformation("Something was wrong. ProductId or UserShoppingCard may be unaveliable!");
             return false;
         }
 
@@ -64,6 +70,7 @@ namespace EShop.Services.Implementation
 
         public List<Product> GetAllProducts()
         {
+            _logger.LogInformation("GetAllProducts was called!");
             return this._productRepository.GetAll().ToList();
         }
 
