@@ -15,13 +15,15 @@ namespace EShop.Services.Implementation
         private readonly IRepository<Order> _orderRepositorty;
         private readonly IRepository<ProductInOrder> _productInOrderRepositorty;
         private readonly IUserRepository _userRepository;
+        private readonly IRepository<EmailMessage> _mailRepository;
 
-        public ShoppingCartService(IRepository<ShoppingCart> shoppingCartRepository, IRepository<ProductInOrder> productInOrderRepositorty, IRepository<Order> orderRepositorty, IUserRepository userRepository)
+        public ShoppingCartService(IRepository<EmailMessage> mailRepository, IRepository<ShoppingCart> shoppingCartRepository, IRepository<ProductInOrder> productInOrderRepositorty, IRepository<Order> orderRepositorty, IUserRepository userRepository)
         {
             _shoppingCartRepositorty = shoppingCartRepository;
             _userRepository = userRepository;
             _orderRepositorty = orderRepositorty;
             _productInOrderRepositorty = productInOrderRepositorty;
+            _mailRepository = mailRepository;
         }
 
         public bool deleteProductFromShoppingCart(string userId, Guid id)
@@ -90,6 +92,11 @@ namespace EShop.Services.Implementation
 
                 var userShoppingCart = loggedInUser.UserCart;
 
+                EmailMessage mail = new EmailMessage();
+                mail.MailTo = loggedInUser.Email;
+                mail.Subject = "Successfully created order";
+                mail.Status = false;
+
                 Order order = new Order
                 {
                     Id = Guid.NewGuid(),
@@ -110,6 +117,27 @@ namespace EShop.Services.Implementation
                     UserOrder = order
                 }).ToList();
 
+                StringBuilder sb = new StringBuilder();
+
+                var totalPrice = 0;
+
+                sb.AppendLine("Your order is completed. The order conains: ");
+
+                for (int i = 1; i <= result.Count(); i++)
+                {
+                    var item = result[i];
+
+                    totalPrice += item.Quantity * item.OrderedProduct.ProductPrice;
+
+                    sb.AppendLine(i.ToString() + ". " + item.OrderedProduct.ProductName + " with price of: " + item.OrderedProduct.ProductPrice + " and quantity of: " + item.Quantity);
+                }
+
+                sb.AppendLine("Total price: " + totalPrice.ToString());
+
+
+                mail.Content = sb.ToString();
+
+
                 productInOrders.AddRange(result);
 
                 foreach (var item in productInOrders)
@@ -120,6 +148,7 @@ namespace EShop.Services.Implementation
                 loggedInUser.UserCart.ProductInShoppingCarts.Clear();
 
                 this._userRepository.Update(loggedInUser);
+                this._mailRepository.Insert(mail);
 
                 return true;
             }
