@@ -125,7 +125,7 @@ namespace EShop.Services.Implementation
 
                 for (int i = 1; i <= result.Count(); i++)
                 {
-                    var item = result[i];
+                    var item = result[i-1];
 
                     totalPrice += item.Quantity * item.OrderedProduct.ProductPrice;
 
